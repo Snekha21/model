@@ -1,19 +1,19 @@
 import onnx
 import numpy as np
-from onnx import numpy_helper
-
+from onnx import helper
 # Load the model
-model = onnx.load("forklift.onnx")
+model = onnx.load("new_model.onnx")
 
-# Convert any INT64 weights to INT32
-for initializer in model.graph.initializer:
-    if initializer.data_type == onnx.TensorProto.INT64:
-        tensor = numpy_helper.to_array(initializer).astype(np.int32)
-        initializer.CopyFrom(numpy_helper.from_array(tensor, initializer.name))
+
+# Load model
+
+# Find the relevant operation and manually add axes
 for node in model.graph.node:
-    if node.op_type == "Reduce" and not any(attr.name == "axes" for attr in node.attribute):
-        axes_attr = onnx.helper.make_attribute("axes", [1])  # Example axis
-        node.attribute.append(axes_attr)
+    if node.op_type == "Transpose":
+        if "perm" not in node.attribute:
+            # Add a permutation if missing
+            node.attribute.append(helper.make_attribute("perm", [0, 2, 3, 1]))
 
-# Save the updated model
+# Save updated model
 onnx.save(model, "new_model.onnx")
+
