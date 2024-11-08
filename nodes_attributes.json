@@ -1,0 +1,9 @@
+[
+    {
+        "node_name": "/model.0/conv/Conv",
+        "op_type": "Conv",
+        "attributes": [
+            {
+                "name": "dilations",
+                "type": 7,
+                "value": 
